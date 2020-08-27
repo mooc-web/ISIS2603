@@ -7,9 +7,11 @@ package co.edu.uniandes.csw.mibarrio.test.persistence;
 
 import co.edu.uniandes.csw.mibarrio.entities.EstudianteEntity;
 import co.edu.uniandes.csw.mibarrio.persistence.EstudiantePersistence;
-import java.util.ArrayList;
 import javax.inject.Inject;
-import junit.framework.Assert;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -27,7 +29,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 public class EstudiantePersistenceTest {
 
     @Deployment
-    public static JavaArchive createDeplyment() {
+    public static JavaArchive createDeployment() {
         return ShrinkWrap.create(JavaArchive.class)
                 .addPackage(EstudianteEntity.class.getPackage())
                 .addPackage(EstudiantePersistence.class.getPackage())
@@ -37,22 +39,23 @@ public class EstudiantePersistenceTest {
 
     @Inject
     EstudiantePersistence ep;
+    
+    @PersistenceContext
+    protected EntityManager em;
 
     @Test
     public void createTest() {
 
-        /*PodamFactory factory = new PodamFactoryImpl();
+        PodamFactory factory = new PodamFactoryImpl();
+        EstudianteEntity estudiante = factory.manufacturePojo(EstudianteEntity.class);
+        EstudianteEntity result = ep.create(estudiante);
+        assertNotNull(result);
         
-        ArrayList<EstudianteEntity> estudiantes = new ArrayList<EstudianteEntity>();
+        EstudianteEntity entity = em.find(EstudianteEntity.class, result.getId());
         
-        for (int i = 0; i < 10; i++) {
-            EstudianteEntity estudiante = factory.manufacturePojo(EstudianteEntity.class);
-            estudiantes.add(estudiante);
-            EstudianteEntity result = ep.create(estudiante);
-        }
-
-        Assert.assertNotNull(result);
-        */
+        assertEquals(estudiante.getName(), entity.getName());
+        assertEquals(estudiante.getAddress(), entity.getAddress());
+        
     }
 
 }
